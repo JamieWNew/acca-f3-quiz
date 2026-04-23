@@ -53,6 +53,10 @@
           <span class="mode-label">Study by Topic</span>
           <span class="mode-desc">Choose a specific topic area</span>
         </button>
+        <button class="mode-btn" id="btn-ledger">
+          <span class="mode-label">Ledger Accounts</span>
+          <span class="mode-desc">Complete T-account exercises</span>
+        </button>
       </div>
 
     </div>
@@ -140,7 +144,39 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SCREEN 5 — ANSWER FEEDBACK
+       SCREEN 5 — T-ACCOUNT LEDGER
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-taccount" class="screen">
+
+    <div class="quiz-header">
+      <button class="back-btn" onclick="confirmQuit()">&#8592; Quit</button>
+      <div class="quiz-meta">
+        <span id="ta-counter" class="question-counter">1 of 10</span>
+      </div>
+    </div>
+
+    <div class="streak-bar">
+      <span class="streak-pip" id="ta-s1">&#9675;</span>
+      <span class="streak-pip" id="ta-s2">&#9675;</span>
+      <span class="streak-pip" id="ta-s3">&#9675;</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="ta-progress-fill"></div>
+    </div>
+
+    <div class="card question-card">
+      <p id="ta-scenario" class="scenario-text"></p>
+    </div>
+
+    <div id="ta-accounts" class="ta-accounts"></div>
+
+    <button class="primary-btn" id="ta-submit-btn" onclick="handleTAccountSubmit()">Check Answer</button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 6 — ANSWER FEEDBACK
   ══════════════════════════════════════════════════════════════════ -->
   <div id="screen-feedback" class="screen">
 

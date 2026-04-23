@@ -3957,6 +3957,322 @@ const QUESTIONS = [
     explanation: "Work through each error's effect on profit:\n\nError 1 — Purchase return £800 on wrong side:\nPurchase returns should be CR (reduces cost of sales). Posted as DR instead → cost of sales is overstated by £800 + £800 = £1,600. Profit is understated by £1,600. Correction: +£1,600.\n\nError 2 — Depreciation credited to asset cost account:\nDepreciation expense (£2,400) is correctly charged in P/L. The wrong balance sheet account is used (asset cost instead of accumulated depreciation) — this affects the SOFP only. No effect on profit. Correction: £0.\n\nError 3 — Payables not updated:\nPaying a supplier (DR payables, CR bank): the bank side is correct. Missing DR to payables is a balance sheet error only. No P/L effect. Correction: £0.\n\nError 4 — Sales invoice omitted:\nRevenue is understated by £3,000. Profit is understated by £3,000. Correction: +£3,000.\n\nCorrected profit = £47,200 + £1,600 + £0 + £0 + £3,000 = £51,800",
   },
 
+,
+
+// ── T-ACCOUNT LEDGER QUESTIONS ───────────────────────────────────────
+
+{
+  id: "QTA001",
+  type: "taccount",
+  difficulty: 3,
+  topic: "nca-disposal",
+  scenario: "A business has total machinery at cost of £110,000 with accumulated depreciation of £70,000. A machine purchased 2 years ago for £30,000 is sold for £19,000 cash. Depreciation is straight-line at 20% per annum with no residual value. Complete the three ledger accounts.",
+  accounts: [
+    {
+      name: "Plant and Machinery at Cost",
+      debits:  [{ label: "Balance b/d",       amount: 110000, given: true }],
+      credits: [
+        { label: "Disposals account",          amount: 30000,  given: false },
+        { label: "Balance c/d",                amount: 80000,  given: false }
+      ]
+    },
+    {
+      name: "Accumulated Depreciation — Plant and Machinery",
+      debits:  [
+        { label: "Disposals account",          amount: 12000,  given: false },
+        { label: "Balance c/d",                amount: 58000,  given: false }
+      ],
+      credits: [{ label: "Balance b/d",        amount: 70000,  given: true }]
+    },
+    {
+      name: "Plant and Machinery Disposals",
+      debits:  [
+        { label: "Plant & Machinery at Cost",  amount: 30000,  given: true  },
+        { label: "P/L — Profit on disposal",   amount: 1000,   given: false }
+      ],
+      credits: [
+        { label: "Accumulated Depreciation",   amount: 12000,  given: true  },
+        { label: "Cash/Bank",                  amount: 19000,  given: true  }
+      ]
+    }
+  ],
+  explanation: "Accumulated depreciation on disposed machine = 20% × £30,000 × 2 years = £12,000. Carrying amount = £30,000 − £12,000 = £18,000. Proceeds = £19,000. Profit = £1,000 (debit side of disposal account closes the surplus). Remaining cost = £110,000 − £30,000 = £80,000. Remaining accum dep = £70,000 − £12,000 = £58,000."
+},
+
+{
+  id: "QTA002",
+  type: "taccount",
+  difficulty: 3,
+  topic: "nca-disposal",
+  scenario: "A business has equipment at cost of £75,000 and accumulated depreciation of £31,000. Equipment originally costing £20,000, acquired 3 years ago, is sold for £11,500 cash. Depreciation is straight-line at 10% per annum with no residual value. Complete the three ledger accounts.",
+  accounts: [
+    {
+      name: "Equipment at Cost",
+      debits:  [{ label: "Balance b/d",        amount: 75000,  given: true }],
+      credits: [
+        { label: "Disposals account",           amount: 20000,  given: false },
+        { label: "Balance c/d",                 amount: 55000,  given: false }
+      ]
+    },
+    {
+      name: "Accumulated Depreciation — Equipment",
+      debits:  [
+        { label: "Disposals account",           amount: 6000,   given: false },
+        { label: "Balance c/d",                 amount: 25000,  given: false }
+      ],
+      credits: [{ label: "Balance b/d",         amount: 31000,  given: true }]
+    },
+    {
+      name: "Equipment Disposals",
+      debits:  [
+        { label: "Equipment at Cost",           amount: 20000,  given: true  }
+      ],
+      credits: [
+        { label: "Accumulated Depreciation",    amount: 6000,   given: true  },
+        { label: "Cash/Bank",                   amount: 11500,  given: true  },
+        { label: "P/L — Loss on disposal",      amount: 2500,   given: false }
+      ]
+    }
+  ],
+  explanation: "Accumulated depreciation on disposed equipment = 10% × £20,000 × 3 years = £6,000. Carrying amount = £20,000 − £6,000 = £14,000. Proceeds = £11,500. Loss = £2,500 (credit side of disposal account closes the deficit). Remaining cost = £55,000. Remaining accum dep = £25,000."
+},
+
+{
+  id: "QTA003",
+  type: "taccount",
+  difficulty: 2,
+  topic: "accruals",
+  scenario: "A business pays electricity bills of £900 per quarter. During the year ended 31 December, three quarterly payments were made (covering the first three quarters). The fourth quarter's bill has not yet been paid. Complete the electricity expense account.",
+  accounts: [
+    {
+      name: "Electricity Expense",
+      debits:  [
+        { label: "Bank (Q1 payment)",  amount: 900, given: true },
+        { label: "Bank (Q2 payment)",  amount: 900, given: true },
+        { label: "Bank (Q3 payment)",  amount: 900, given: true },
+        { label: "Accrual c/d",        amount: 900, given: false }
+      ],
+      credits: [
+        { label: "P/L — Electricity",  amount: 3600, given: false }
+      ]
+    }
+  ],
+  explanation: "Four quarters of electricity = 4 × £900 = £3,600 is the full year charge to P/L. Only three payments of £900 have been made, so an accrual of £900 is needed for the fourth quarter. The accrual appears on the debit side to balance the account, and carries down as a liability."
+},
+
+{
+  id: "QTA004",
+  type: "taccount",
+  difficulty: 2,
+  topic: "prepayments",
+  scenario: "A business pays an annual insurance premium of £3,600 on 1 April each year. The year end is 31 December. Complete the insurance expense account for the year ended 31 December.",
+  accounts: [
+    {
+      name: "Insurance Expense",
+      debits:  [
+        { label: "Bank (premium paid 1 Apr)",  amount: 3600, given: true }
+      ],
+      credits: [
+        { label: "Prepayment c/d (3 months)",  amount: 900,  given: false },
+        { label: "P/L — Insurance",            amount: 2700, given: false }
+      ]
+    }
+  ],
+  explanation: "The premium of £3,600 covers 12 months from 1 April. By 31 December, 9 months have been used (April–December). Remaining prepayment = 3/12 × £3,600 = £900. Charge to P/L = 9/12 × £3,600 = £2,700."
+},
+
+{
+  id: "QTA005",
+  type: "taccount",
+  difficulty: 3,
+  topic: "allowance-receivables",
+  scenario: "At 31 December, trade receivables are £72,500. The business maintains an allowance for receivables of 4% of receivables. The opening allowance (b/d) was £2,400. Complete the allowance for receivables account.",
+  accounts: [
+    {
+      name: "Allowance for Receivables",
+      debits:  [
+        { label: "Balance c/d",                amount: 2900, given: false }
+      ],
+      credits: [
+        { label: "Balance b/d",                amount: 2400, given: true  },
+        { label: "IDD expense — increase",     amount: 500,  given: false }
+      ]
+    }
+  ],
+  explanation: "Required allowance = 4% × £72,500 = £2,900. Opening allowance = £2,400. Increase required = £500. The increase is charged to the irrecoverable debts expense account (debit IDD expense, credit allowance). The allowance account closes with a credit balance c/d of £2,900."
+},
+
+{
+  id: "QTA006",
+  type: "taccount",
+  difficulty: 3,
+  topic: "irrecoverable-debts",
+  scenario: "During the year a business wrote off a debt of £2,400 as irrecoverable. Later in the year £600 was unexpectedly recovered from a previously written-off debt. The allowance for receivables also increased by £600. Complete the irrecoverable debts expense account.",
+  accounts: [
+    {
+      name: "Irrecoverable Debts Expense",
+      debits:  [
+        { label: "Receivables — write-off",    amount: 2400, given: true  },
+        { label: "Allowance — increase",       amount: 600,  given: false }
+      ],
+      credits: [
+        { label: "Bank — debt recovered",      amount: 600,  given: true  },
+        { label: "P/L — net IDD charge",       amount: 2400, given: false }
+      ]
+    }
+  ],
+  explanation: "Total debits = write-off £2,400 + allowance increase £600 = £3,000. Total credits = recovery £600 + P/L £2,400 = £3,000. Net charge to P/L = £2,400 (write-off £2,400 + allowance increase £600 − recovery £600)."
+},
+
+{
+  id: "QTA007",
+  type: "taccount",
+  difficulty: 3,
+  topic: "control-accounts",
+  scenario: "From the following information, complete the Sales Ledger Control Account and calculate the cash received from customers. Opening balance £48,600 | Credit sales £186,400 | Discounts allowed £3,100 | Bad debts written off £1,900 | Contra with PLCA £2,400 | Closing balance £51,400.",
+  accounts: [
+    {
+      name: "Sales Ledger Control Account",
+      debits:  [
+        { label: "Balance b/d",                amount: 48600,  given: true  },
+        { label: "Credit sales",               amount: 186400, given: true  }
+      ],
+      credits: [
+        { label: "Bank — cash received",       amount: 176200, given: false },
+        { label: "Discounts allowed",          amount: 3100,   given: true  },
+        { label: "Bad debts written off",      amount: 1900,   given: true  },
+        { label: "Contra — PLCA",             amount: 2400,   given: true  },
+        { label: "Balance c/d",               amount: 51400,  given: true  }
+      ]
+    }
+  ],
+  explanation: "Total debits = £48,600 + £186,400 = £235,000. Total credits must also = £235,000. Known credits = £3,100 + £1,900 + £2,400 + £51,400 = £58,800. Cash received = £235,000 − £58,800 = £176,200."
+},
+
+{
+  id: "QTA008",
+  type: "taccount",
+  difficulty: 3,
+  topic: "control-accounts",
+  scenario: "From the following information, complete the Purchase Ledger Control Account and calculate the credit purchases for the period. Opening balance £28,600 | Payments to suppliers £164,200 | Discounts received £3,400 | Returns outwards £2,800 | Contra with SLCA £1,600 | Closing balance £35,400.",
+  accounts: [
+    {
+      name: "Purchase Ledger Control Account",
+      debits:  [
+        { label: "Bank — payments",            amount: 164200, given: true  },
+        { label: "Discounts received",         amount: 3400,   given: true  },
+        { label: "Returns outwards",           amount: 2800,   given: true  },
+        { label: "Contra — SLCA",             amount: 1600,   given: true  },
+        { label: "Balance c/d",               amount: 35400,  given: true  }
+      ],
+      credits: [
+        { label: "Balance b/d",               amount: 28600,  given: true  },
+        { label: "Credit purchases",          amount: 178800, given: false }
+      ]
+    }
+  ],
+  explanation: "Total debits = £164,200 + £3,400 + £2,800 + £1,600 + £35,400 = £207,400. Total credits must also = £207,400. Known credits = £28,600. Credit purchases = £207,400 − £28,600 = £178,800."
+},
+
+{
+  id: "QTA009",
+  type: "taccount",
+  difficulty: 2,
+  topic: "accruals",
+  scenario: "The wages account shows: cash paid during the year £82,400; opening accrual b/d £1,800; closing accrual c/d £2,600. Complete the wages account and calculate the charge to profit or loss.",
+  accounts: [
+    {
+      name: "Wages Expense",
+      debits:  [
+        { label: "Balance b/d (accrual)",      amount: 1800,  given: true  },
+        { label: "Bank — cash paid",           amount: 82400, given: true  }
+      ],
+      credits: [
+        { label: "Balance c/d (accrual)",      amount: 2600,  given: false },
+        { label: "P/L — wages charge",         amount: 81600, given: false }
+      ]
+    }
+  ],
+  explanation: "Total debits = £1,800 + £82,400 = £84,200. Closing accrual c/d = £2,600 (credit side). P/L charge = £84,200 − £2,600 = £81,600. Alternatively: cash paid £82,400 − opening accrual £1,800 + closing accrual £2,600 = £83,200. Wait — let me recheck: P/L = opening accrual + cash − closing accrual = £1,800 + £82,400 − £2,600 = £81,600."
+},
+
+{
+  id: "QTA010",
+  type: "taccount",
+  difficulty: 2,
+  topic: "prepayments",
+  scenario: "The rates account shows: opening prepayment b/d £1,800; cash paid during the year £8,400; closing prepayment c/d £2,100. Complete the rates account and calculate the charge to profit or loss.",
+  accounts: [
+    {
+      name: "Rates Expense",
+      debits:  [
+        { label: "Balance b/d (prepayment)",   amount: 1800, given: true  },
+        { label: "Bank — cash paid",           amount: 8400, given: true  }
+      ],
+      credits: [
+        { label: "Balance c/d (prepayment)",   amount: 2100, given: false },
+        { label: "P/L — rates charge",         amount: 8100, given: false }
+      ]
+    }
+  ],
+  explanation: "Total debits = £1,800 + £8,400 = £10,200. Closing prepayment c/d = £2,100 (credit side — the amount relating to next year). P/L charge = £10,200 − £2,100 = £8,100. Alternatively: opening prepayment + cash − closing prepayment = £1,800 + £8,400 − £2,100 = £8,100."
+},
+
+{
+  id: "QTA011",
+  type: "taccount",
+  difficulty: 3,
+  topic: "incomplete-records",
+  scenario: "A business uses the receivables account to calculate missing figures. Opening receivables £24,600 | Credit sales £186,400 | Bad debts written off £1,800 | Closing receivables £19,200. Calculate cash received from customers.",
+  accounts: [
+    {
+      name: "Trade Receivables",
+      debits:  [
+        { label: "Balance b/d",                amount: 24600,  given: true  },
+        { label: "Credit sales",               amount: 186400, given: true  }
+      ],
+      credits: [
+        { label: "Bank — cash received",       amount: 190000, given: false },
+        { label: "Bad debts written off",      amount: 1800,   given: true  },
+        { label: "Balance c/d",               amount: 19200,  given: true  }
+      ]
+    }
+  ],
+  explanation: "Total debits = £24,600 + £186,400 = £211,000. Known credits = £1,800 + £19,200 = £21,000. Cash received = £211,000 − £21,000 = £190,000."
+},
+
+{
+  id: "QTA012",
+  type: "taccount",
+  difficulty: 3,
+  topic: "allowance-receivables",
+  scenario: "During the year: bad debt written off £900; debt of £200 previously written off was recovered. Opening allowance for receivables £1,400. Closing receivables (after write-off) = £58,000; allowance rate 3%. Complete both the irrecoverable debts expense account and the allowance for receivables account.",
+  accounts: [
+    {
+      name: "Irrecoverable Debts Expense",
+      debits:  [
+        { label: "Receivables — write-off",    amount: 900,  given: true  },
+        { label: "Allowance — increase",       amount: 340,  given: false }
+      ],
+      credits: [
+        { label: "Bank — debt recovered",      amount: 200,  given: true  },
+        { label: "P/L — net IDD charge",       amount: 1040, given: false }
+      ]
+    },
+    {
+      name: "Allowance for Receivables",
+      debits:  [
+        { label: "Balance c/d",                amount: 1740, given: false }
+      ],
+      credits: [
+        { label: "Balance b/d",                amount: 1400, given: true  },
+        { label: "IDD expense — increase",     amount: 340,  given: false }
+      ]
+    }
+  ],
+  explanation: "Required allowance = 3% × £58,000 = £1,740. Opening allowance = £1,400. Increase = £340. IDD account: debits = write-off £900 + allowance increase £340 = £1,240. Credits = recovery £200 + P/L £1,040 = £1,240. Net P/L charge = £900 + £340 − £200 = £1,040."
+}
+
 ];
 
 /**

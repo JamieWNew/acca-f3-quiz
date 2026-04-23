@@ -177,6 +177,7 @@ function initHome() {
   bind('btn-mcq',     () => startQuiz('mcq'));
   bind('btn-journal', () => startQuiz('journal'));
   bind('btn-topic',   () => { renderTopics(); showScreen('topics'); });
+  bind('btn-ledger',  () => startQuiz('ledger'));
   renderHomeStats();
   renderDueBadge();
   renderWeakTopics();
@@ -337,6 +338,7 @@ function startTopicQuiz(topic) {
  */
 function isRenderable(q) {
   if (q.type === 'build') return false;
+  if (q.type === 'taccount') return false;  // shown only in ledger mode
   if (q.type === 'multi' && q.entries) {
     if (q.entries.some(e => e.credit_multi || e.debit_multi)) return false;
   }
@@ -344,16 +346,21 @@ function isRenderable(q) {
 }
 
 function getPool(mode, topic) {
-  let pool = QUESTIONS.filter(isRenderable);
+  let pool;
 
-  if (mode === 'mcq') {
-    pool = pool.filter(q => q.type === 'mcq');
-  } else if (mode === 'journal') {
-    pool = pool.filter(q => q.type === 'journal' || q.type === 'multi');
-  } else if (mode === 'review') {
-    pool = getDueQuestions(pool);
+  if (mode === 'ledger') {
+    pool = QUESTIONS.filter(q => q.type === 'taccount');
+  } else {
+    pool = QUESTIONS.filter(isRenderable);
+    if (mode === 'mcq') {
+      pool = pool.filter(q => q.type === 'mcq');
+    } else if (mode === 'journal') {
+      pool = pool.filter(q => q.type === 'journal' || q.type === 'multi');
+    } else if (mode === 'review') {
+      pool = getDueQuestions(pool);
+    }
+    // 'mixed': all renderable types
   }
-  // 'mixed': all renderable types
 
   if (topic) {
     pool = pool.filter(q => q.topic === topic);
@@ -394,7 +401,7 @@ function startQuiz(mode, topic = null) {
   state.highestStreak = 0;
   state.currentIndex  = 0;
 
-  state.generatedPool = (mode !== 'journal')
+  state.generatedPool = (mode !== 'journal' && mode !== 'ledger')
     ? generateQuestions(12, { topic })
     : [];
 
@@ -426,6 +433,9 @@ function loadQuestion() {
   if (q.type === 'mcq') {
     renderMCQ(q, counter);
     showScreen('mcq');
+  } else if (q.type === 'taccount') {
+    renderTAccount(q, counter);
+    showScreen('taccount');
   } else {
     renderJournal(q, counter);
     showScreen('journal');
@@ -566,6 +576,119 @@ function handleJournalSubmit() {
   setTimeout(() => showFeedback(allCorrect, q), 400);
 }
 
+// ── T-ACCOUNT LEDGER ─────────────────────────────────────────────────
+
+function renderTAccount(q, counter) {
+  document.getElementById('ta-counter').textContent = counter;
+  document.getElementById('ta-scenario').textContent = q.scenario;
+  updateStreakDisplay('ta');
+  updateProgressBar();
+
+  document.getElementById('ta-accounts').innerHTML =
+    q.accounts.map((acct, ai) => buildTAccountTableHTML(acct, ai, false)).join('');
+
+  document.getElementById('ta-submit-btn').disabled = false;
+}
+
+function buildTAccountTableHTML(acct, ai, complete) {
+  const drs  = acct.debits;
+  const crs  = acct.credits;
+  const rows = Math.max(drs.length, crs.length);
+  let tbody  = '';
+
+  for (let ri = 0; ri < rows; ri++) {
+    const dr = drs[ri];
+    const cr = crs[ri];
+
+    let drLabel, drCell;
+    if (dr) {
+      drLabel = `<td class="ta-label">${dr.label}</td>`;
+      if (dr.given || complete) {
+        const revCls = complete && !dr.given ? ' ta-reveal' : '';
+        drCell = `<td class="ta-amt${revCls}">&pound;${dr.amount.toLocaleString()}</td>`;
+      } else {
+        drCell = `<td class="ta-input-cell"><input type="number" id="ta-${ai}-d-${ri}" class="ta-input" placeholder="0"></td>`;
+      }
+    } else {
+      drLabel = '<td class="ta-label"></td>';
+      drCell  = '<td class="ta-amt"></td>';
+    }
+
+    let crLabel, crCell;
+    if (cr) {
+      crLabel = `<td class="ta-cr-label">${cr.label}</td>`;
+      if (cr.given || complete) {
+        const revCls = complete && !cr.given ? ' ta-reveal' : '';
+        crCell = `<td class="ta-amt${revCls}">&pound;${cr.amount.toLocaleString()}</td>`;
+      } else {
+        crCell = `<td class="ta-input-cell"><input type="number" id="ta-${ai}-c-${ri}" class="ta-input" placeholder="0"></td>`;
+      }
+    } else {
+      crLabel = '<td class="ta-cr-label"></td>';
+      crCell  = '<td class="ta-amt"></td>';
+    }
+
+    tbody += `<tr>${drLabel}${drCell}${crLabel}${crCell}</tr>`;
+  }
+
+  return `<div class="ta-table-wrap">
+    <div class="ta-account-title">${acct.name}</div>
+    <table class="ta-table">
+      <thead><tr>
+        <th colspan="2" class="ta-dr-head">DR &mdash; Debit</th>
+        <th colspan="2" class="ta-cr-head">CR &mdash; Credit</th>
+      </tr></thead>
+      <tbody>${tbody}</tbody>
+    </table>
+  </div>`;
+}
+
+function buildCompleteTAccountHTML(accounts) {
+  return accounts.map((acct, ai) => buildTAccountTableHTML(acct, ai, true)).join('');
+}
+
+function handleTAccountSubmit() {
+  const q = state.currentQuestion;
+  let allCorrect = true;
+
+  q.accounts.forEach((acct, ai) => {
+    acct.debits.forEach((dr, ri) => {
+      if (!dr.given) {
+        const input = document.getElementById(`ta-${ai}-d-${ri}`);
+        if (input) {
+          const val     = parseInt(input.value, 10);
+          const correct = val === dr.amount;
+          if (!correct) allCorrect = false;
+          input.disabled = true;
+          input.classList.add(correct ? 'ta-correct' : 'ta-wrong');
+        }
+      }
+    });
+    acct.credits.forEach((cr, ri) => {
+      if (!cr.given) {
+        const input = document.getElementById(`ta-${ai}-c-${ri}`);
+        if (input) {
+          const val     = parseInt(input.value, 10);
+          const correct = val === cr.amount;
+          if (!correct) allCorrect = false;
+          input.disabled = true;
+          input.classList.add(correct ? 'ta-correct' : 'ta-wrong');
+        }
+      }
+    });
+  });
+
+  document.getElementById('ta-submit-btn').disabled = true;
+
+  state.answers.push({ question: q, correct: allCorrect });
+  if (allCorrect) state.score++;
+
+  updateSR(q.id, allCorrect);
+  updateStreak(allCorrect);
+
+  setTimeout(() => showFeedback(allCorrect, q), 800);
+}
+
 // ── T-ACCOUNT HELPERS ────────────────────────────────────────────────
 
 const CAT_LABELS = {
@@ -623,6 +746,8 @@ function showFeedback(isCorrect, q) {
     if (q.entries) {
       answerEl.innerHTML += buildTAccountHTML(q.entries);
     }
+  } else if (q.type === 'taccount') {
+    answerEl.innerHTML = '<strong>Complete ledger:</strong>' + buildCompleteTAccountHTML(q.accounts);
   } else {
     answerEl.innerHTML = buildTAccountHTML(q.entries);
   }
@@ -670,7 +795,7 @@ function nextQuestion() {
 // ── STREAK & ADAPTIVE DIFFICULTY ────────────────────────────────────
 
 function updateProgressBar() {
-  ['mcq', 'journal'].forEach(prefix => {
+  ['mcq', 'journal', 'ta'].forEach(prefix => {
     const el = document.getElementById(`${prefix}-progress-fill`);
     if (el) el.style.width = (state.answers.length / state.quizLength * 100) + '%';
   });
@@ -734,6 +859,8 @@ function showResults() {
       if (q.type === 'mcq') {
         const correct = q.options.find(o => o.correct);
         answerLine = `${correct.label} &mdash; ${correct.text}`;
+      } else if (q.type === 'taccount') {
+        answerLine = 'See ledger accounts in feedback';
       } else {
         answerLine = q.entries
           .map(e => `DR ${e.debit} / CR ${e.credit} \u2014 \u00A3${e.amount.toLocaleString()}`)

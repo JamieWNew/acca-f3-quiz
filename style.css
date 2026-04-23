@@ -1096,6 +1096,120 @@ body {
   margin-bottom: 6px;
 }
 
+/* ── T-ACCOUNT LEDGER ───────────────────────────────────────────── */
+.ta-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.ta-table-wrap {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.ta-account-title {
+  background: var(--navy);
+  color: #fff;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.ta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  table-layout: fixed;
+}
+
+.ta-table th,
+.ta-table td {
+  padding: 5px 7px;
+  border: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.ta-dr-head {
+  background: #e8f5e9;
+  color: var(--green-text);
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.ta-cr-head {
+  background: #ffebee;
+  color: var(--red-text);
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.ta-label {
+  color: var(--text);
+  width: 38%;
+}
+
+.ta-cr-label {
+  color: var(--text);
+  width: 38%;
+}
+
+.ta-amt {
+  text-align: right;
+  font-family: monospace;
+  color: var(--muted);
+  white-space: nowrap;
+  width: 12%;
+}
+
+.ta-amt.ta-reveal {
+  background: var(--green-light);
+  color: var(--green-text);
+  font-weight: 700;
+}
+
+.ta-input-cell {
+  padding: 3px 5px;
+  width: 12%;
+}
+
+.ta-input {
+  width: 100%;
+  padding: 4px 5px;
+  border: 2px solid var(--navy);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  text-align: right;
+  background: #fff;
+  font-family: monospace;
+}
+
+.ta-input:focus {
+  outline: none;
+  border-color: var(--navy-hover);
+}
+
+.ta-input.ta-correct {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green-text);
+}
+
+.ta-input.ta-wrong {
+  background: var(--red-light);
+  border-color: var(--red);
+  color: var(--red-text);
+}
+
 /* ══════════════════════════════════════════════════════════════════
    RESPONSIVE — wider screens
    ══════════════════════════════════════════════════════════════════ */
