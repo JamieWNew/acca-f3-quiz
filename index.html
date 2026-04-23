@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACCA F3 Financial Accounting Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 1 — HOME
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="home-container">
+
+      <header class="home-header">
+        <h1>ACCA F3</h1>
+        <p class="tagline">Financial Accounting Quiz</p>
+      </header>
+
+      <div id="home-stats" class="home-stats" style="display:none">
+        <!-- populated by renderHomeStats() -->
+      </div>
+
+      <div id="weak-topics-widget" style="display:none" class="weak-topics-widget">
+        <!-- populated by renderWeakTopics() -->
+      </div>
+
+      <div class="length-selector">
+        <span class="length-label">Questions per quiz</span>
+        <div class="length-btns">
+          <button class="len-btn" id="len-5"  onclick="setQuizLength(5)">5</button>
+          <button class="len-btn active" id="len-10" onclick="setQuizLength(10)">10</button>
+          <button class="len-btn" id="len-20" onclick="setQuizLength(20)">20</button>
+        </div>
+      </div>
+
+      <div class="mode-buttons">
+        <button class="mode-btn review-due" id="btn-review">
+          <span class="mode-label">Review Due <span id="due-count-badge" class="due-badge" style="display:none"></span></span>
+          <span class="mode-desc">Questions scheduled for today — spaced repetition</span>
+        </button>
+        <button class="mode-btn" id="btn-mcq">
+          <span class="mode-label">MCQ Quiz</span>
+          <span class="mode-desc">Multiple choice questions</span>
+        </button>
+        <button class="mode-btn" id="btn-journal">
+          <span class="mode-label">Journal Entry</span>
+          <span class="mode-desc">Debit and credit practice</span>
+        </button>
+        <button class="mode-btn" id="btn-topic">
+          <span class="mode-label">Study by Topic</span>
+          <span class="mode-desc">Choose a specific topic area</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 2 — TOPIC SELECTOR
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-topics" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('home')">&#8592; Back</button>
+      <h2>Study by Topic</h2>
+    </div>
+    <div class="topics-grid" id="topics-grid">
+      <!-- populated by renderTopics() -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 3 — MCQ QUESTION
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-mcq" class="screen">
+
+    <div class="quiz-header">
+      <button class="back-btn" onclick="confirmQuit()">&#8592; Quit</button>
+      <div class="quiz-meta">
+        <span id="mcq-counter" class="question-counter">1 of 10</span>
+      </div>
+    </div>
+
+    <div class="streak-bar">
+      <span class="streak-pip" id="mcq-s1">&#9675;</span>
+      <span class="streak-pip" id="mcq-s2">&#9675;</span>
+      <span class="streak-pip" id="mcq-s3">&#9675;</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="mcq-progress-fill"></div>
+    </div>
+
+    <div class="card question-card">
+      <p id="mcq-scenario" class="scenario-text"></p>
+    </div>
+
+    <div id="mcq-options" class="options-list">
+      <!-- populated by renderMCQ() -->
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 4 — JOURNAL ENTRY
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-journal" class="screen">
+
+    <div class="quiz-header">
+      <button class="back-btn" onclick="confirmQuit()">&#8592; Quit</button>
+      <div class="quiz-meta">
+        <span id="journal-counter" class="question-counter">1 of 10</span>
+      </div>
+    </div>
+
+    <div class="streak-bar">
+      <span class="streak-pip" id="journal-s1">&#9675;</span>
+      <span class="streak-pip" id="journal-s2">&#9675;</span>
+      <span class="streak-pip" id="journal-s3">&#9675;</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="journal-progress-fill"></div>
+    </div>
+
+    <div class="card question-card">
+      <p id="journal-scenario" class="scenario-text"></p>
+      <p id="journal-task" class="task-text"></p>
+      <p id="journal-hint" class="hint-text" style="display:none"></p>
+    </div>
+
+    <div id="journal-entries" class="journal-entries">
+      <!-- populated by renderJournal() -->
+    </div>
+
+    <button class="primary-btn" onclick="handleJournalSubmit()">Check Answer</button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 5 — ANSWER FEEDBACK
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-feedback" class="screen">
+
+    <div id="feedback-banner" class="feedback-banner">
+      <span id="feedback-icon" class="feedback-icon"></span>
+      <span id="feedback-label" class="feedback-label"></span>
+    </div>
+
+    <div class="card feedback-card">
+      <div id="feedback-correct-answer" class="correct-answer"></div>
+      <hr class="divider">
+      <p id="feedback-explanation" class="explanation-text"></p>
+    </div>
+
+    <button id="feedback-notes-btn" class="notes-link-btn" style="display:none" onclick="showNotesFromFeedback()">&#128218; Study notes for this topic</button>
+
+    <button class="primary-btn" onclick="nextQuestion()">Next Question &#8594;</button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 6 — RESULTS
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-results" class="screen">
+    <div class="results-container">
+
+      <h2 class="results-title">Quiz Complete</h2>
+
+      <div class="score-display">
+        <span id="results-score" class="score-number">0/10</span>
+        <span id="results-pct" class="score-pct">0%</span>
+      </div>
+
+      <p id="results-message" class="results-message"></p>
+      <div id="results-weak-suggestion" class="results-weak-suggestion" style="display:none"></div>
+
+      <div class="results-stats">
+        <div class="stat-item">
+          <span class="stat-label">Best streak</span>
+          <span id="results-streak" class="stat-value">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Overall accuracy</span>
+          <span id="results-overall-acc" class="stat-value">—</span>
+        </div>
+      </div>
+
+      <div id="results-wrong" class="results-wrong-list"></div>
+
+      <div class="results-actions">
+        <button class="primary-btn" onclick="restartQuiz()">Try Again</button>
+        <button class="secondary-btn" onclick="showScreen('home')">Home</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 7 — STUDY NOTES
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="screen-notes" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" id="notes-back-btn">&#8592; Back</button>
+      <h2 id="notes-title">Study Notes</h2>
+    </div>
+    <div id="notes-content" class="notes-content">
+      <!-- populated by renderNotes() -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TOAST NOTIFICATION
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="accounts.js"></script>
+  <script src="questions.js"></script>
+  <script src="templates.js"></script>
+  <script src="notes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
