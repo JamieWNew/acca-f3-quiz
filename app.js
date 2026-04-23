@@ -257,9 +257,11 @@ function renderTopics() {
     const topicQs      = pool.filter(q => q.topic === topic);
     const mcqCount     = topicQs.filter(q => q.type === 'mcq').length;
     const journalCount = topicQs.filter(q => q.type === 'journal' || q.type === 'multi').length;
+    const ledgerCount  = topicQs.filter(q => q.type === 'taccount').length;
     const parts = [];
     if (mcqCount > 0)     parts.push(mcqCount + ' MCQ');
     if (journalCount > 0) parts.push(journalCount + ' Journal');
+    if (ledgerCount > 0)  parts.push(ledgerCount + ' Ledger');
 
     const acc = getTopicAccuracy(topic);
     const accBadge = acc
@@ -338,7 +340,6 @@ function startTopicQuiz(topic) {
  */
 function isRenderable(q) {
   if (q.type === 'build') return false;
-  if (q.type === 'taccount') return false;  // shown only in ledger mode
   if (q.type === 'multi' && q.entries) {
     if (q.entries.some(e => e.credit_multi || e.debit_multi)) return false;
   }
